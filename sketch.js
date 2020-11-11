@@ -6,16 +6,16 @@ const palettes = require('nice-color-palettes');
 random.setSeed(random.getRandomSeed());
 
 const settings = {
-  // dimensions: [2048, 2048],
-  suffix: random.getSeed(),
-  dimensions: "letter",
-  units: 'in',
-  pixelsPerInch: 300
+  dimensions: [2048, 2048],
+  // suffix: random.getSeed(),
+  // dimensions: "letter",
+  // units: 'in',
+  // pixelsPerInch: 300
 };
 
 const sketch = () => {
-  // const colorCount = random.rangeFloor(3, 6);
-  // const palette = random.shuffle(random.pick(palettes)).slice(0, colorCount);
+  const colorCount = random.rangeFloor(3, 6);
+  const palette = random.shuffle(random.pick(palettes)).slice(0, colorCount);
   // const symbols = ['-','=', '+', '.']
 
   const createGrid = (height, width) => {
@@ -29,11 +29,14 @@ const sketch = () => {
         const u = xcount <= 1 ? 0.5 : Math.max(0, x/(xcount - 1));
         const v = xcount <= 1 ? 0.5 : Math.max(0, y/(ycount - 1));
         const weight = Math.abs(random.noise2D(u, v));
+        const arc = x * ((Math.PI * 2) / xcount);
+        console.log(weight);
         points.push({
           position: [u, v],
           weight: weight,
-          // color: random.pick(palette),
-          // rotation: random.noise2D(u, v),
+          color: random.pick(palette),
+          arc: arc,
+          rotation: random.noise2D(u, v),
           // symbol: random.pick(symbols),
         });
       }
@@ -46,19 +49,18 @@ const sketch = () => {
   return ({ context, width, height }) => {
     // const points = createGrid(height, width).filter(() => random.gaussian() > 0.1);
     const points = createGrid(height, width);
-    console.log(points);
 
     const margin = .09 * width;
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
-
     points.forEach((data) => {
       const {
         position,
         weight,
-        // color,
-        // rotation,
+        color,
+        arc,
+        rotation,
         // symbol
       } = data;
 
@@ -66,13 +68,21 @@ const sketch = () => {
       const x = lerp(margin, width-margin, u);
       const y = lerp(margin, height-margin, v);
 
-      console.log(x, y);
-
+      context.save();
+      context.translate(x, y);
+      context.rotate(rotation);
       context.beginPath();
-      context.arc(x, y, .05 * weight * width, 0, Math.PI * 2, true);
-      context.strokeStyle = 'black';
-      context.lineWidth = .002 * weight * width;
-      context.stroke();
+      // context.arc(x, y, .05 * width, 0, Math.PI * 2 * weight, true);
+      // context.arc(0, 0, .03 * width, 0, Math.PI, true);
+      context.font = `${weight * width * .1}px "Helvetica"`;
+      context.fillStyle = color;
+      context.fillText('2020', 0, 0);
+      // context.strokeStyle = 'black';
+      // context.lineWidth = .001 * width;
+      // context.fillStyle = color;
+      // context.fill();
+      // context.stroke();
+      context.restore();
 
 
       // context.save();
