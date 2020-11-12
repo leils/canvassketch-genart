@@ -2,6 +2,7 @@ const canvasSketch = require('canvas-sketch');
 const { lerp } = require('canvas-sketch-util/math');
 const random = require('canvas-sketch-util/random');
 const palettes = require('nice-color-palettes');
+const Color = require('canvas-sketch-util/color');
 
 random.setSeed(random.getRandomSeed());
 
@@ -9,6 +10,7 @@ const settings = {
   dimensions: [2048, 2048],
   // suffix: random.getSeed(),
   // dimensions: "letter",
+  // orientation: 'landscape',
   // units: 'in',
   // pixelsPerInch: 300
 };
@@ -16,7 +18,6 @@ const settings = {
 const sketch = () => {
   const colorCount = random.rangeFloor(3, 6);
   const palette = random.shuffle(random.pick(palettes)).slice(0, colorCount);
-  // const symbols = ['-','=', '+', '.']
 
   const createGrid = (height, width) => {
     const points = [];
@@ -35,14 +36,25 @@ const sketch = () => {
           position: [u, v],
           weight: weight,
           color: random.pick(palette),
-          arc: arc,
           rotation: random.noise2D(u, v),
-          // symbol: random.pick(symbols),
         });
       }
     }
     return points;
   };
+
+  // const createList = (height, width) => {
+  //   const intervals = [];
+  //   const count = 4;
+
+  //   for (let x=0; x<count; x++) {
+  //     points.push({
+  //       rotation: random.value(x)
+  //     })
+  //   }
+
+  //   return intervals;
+  // }
 
   // const points = createGrid().filter(() => random.gaussian() > 0.3);
 
@@ -74,26 +86,15 @@ const sketch = () => {
       context.beginPath();
       // context.arc(x, y, .05 * width, 0, Math.PI * 2 * weight, true);
       // context.arc(0, 0, .03 * width, 0, Math.PI, true);
-      context.font = `${weight * width * .1}px "Helvetica"`;
-      context.fillStyle = color;
-      context.fillText('2020', 0, 0);
+      context.font = `${width * .05}px "Helvetica"`;
+      context.fillStyle = `rgba(255, 0, 0, ${weight}`;
+      context.fillText('-', 0, 0);
       // context.strokeStyle = 'black';
       // context.lineWidth = .001 * width;
       // context.fillStyle = color;
       // context.fill();
       // context.stroke();
       context.restore();
-
-
-      // context.save();
-      // context.fillStyle = color;
-      // // context.font = `${weight * width}px "Helvetica"`;
-      // context.font = `2px "Helvetica"`;
-      // context.translate(x, y);
-      // // context.rotate(rotation);
-      // // context.fillText(symbol, 0, 0);
-      // // context.fillText("o", 0, 0);
-      // context.restore();
     });
   };
 };
