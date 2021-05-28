@@ -2,61 +2,75 @@ const canvasSketch = require('canvas-sketch');
 const { lerp } = require('canvas-sketch-util/math');
 const random = require('canvas-sketch-util/random');
 const palettes = require('nice-color-palettes');
-const Color = require('canvas-sketch-util/color');
 
 random.setSeed(random.getRandomSeed());
 
 const settings = {
-  dimensions: [2048, 2048],
-  // suffix: random.getSeed(),
-  // dimensions: "letter",
-  // orientation: 'landscape',
-  // units: 'in',
-  // pixelsPerInch: 300
+  dimensions: [2048, 2048]
 };
 
 const sketch = () => {
-  const createList = (height, width) => {
-    const intervals = [];
-    const count = 10;
+  const createGrid = (height, width) => {
+    const points = [];
+    const heightratio = height/width;
+    const xcount = 20;
+    const ycount = xcount * heightratio;
 
-    for (let x=0; x<count; x++) {
-      intervals.push({
-        count: x,
-        rotation: random.value(x) * (Math.PI * 2)
-      })
+    for (let x=0; x < xcount; x++ ) {
+      for (let y=0; y< ycount; y++) {
+        const u = xcount <= 1 ? 0.5 : Math.max(0, x/(xcount - 1));
+        const v = xcount <= 1 ? 0.5 : Math.max(0, y/(ycount - 1));
+        const weight = Math.abs(random.noise2D(u, v, frequency=1.75));
+        points.push({
+          position: [u, v],
+          weight: weight,
+        });
+      }
     }
+    return points;
+  };
 
-    return intervals;
-  }
-
+  // const points = createGrid().filter(() => random.gaussian() > 0.3);
 
   return ({ context, width, height }) => {
-    const intervals = createList(height, width);
+    const points = createGrid(height, width);
+    console.log(points);
 
-    // Set background
+    // Background
     const margin = .09 * width;
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
-    const intervalSize = 1 / intervals.length / 2;
 
-    intervals.forEach((data) => {
+    points.forEach((data) => {
       const {
-        count,
-        rotation
+        position,
+        weight,
       } = data;
 
+      const [u, v] = position;
+      const x = lerp(margin, width-margin, u);
+      const y = lerp(margin, height-margin, v);
 
-      context.save();
-      context.translate(width / 2, height / 2);
-      context.rotate(rotation);
+      console.log(x, y);
+
       context.beginPath();
-      context.arc(0, 0, (intervalSize * width) * count, 0, Math.PI * .25, true);
+      context.arc(x, y, .02 * weight * width, 0, Math.PI * 2, true);
+      // start a cross
       context.strokeStyle = 'black';
-      context.lineWidth = .01 * width;
+      context.lineWidth = .002 * weight * width;
       context.stroke();
-      context.restore();
+
+
+      // context.save();
+      // context.fillStyle = color;
+      // // context.font = `${weight * width}px "Helvetica"`;
+      // context.font = `2px "Helvetica"`;
+      // context.translate(x, y);
+      // // context.rotate(rotation);
+      // // context.fillText(symbol, 0, 0);
+      // // context.fillText("o", 0, 0);
+      // context.restore();
     });
   };
 };
