@@ -41,6 +41,10 @@ const sketch = () => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
+    const dimension = 100;
+    context.fillStyle = "black";
+    context.lineWidth = 5;
+
 
     points.forEach((data) => {
       const {
@@ -55,22 +59,12 @@ const sketch = () => {
       console.log(x, y);
 
       context.beginPath();
-      context.arc(x, y, .02 * weight * width, 0, Math.PI * 2, true);
-      // start a cross
-      context.strokeStyle = 'black';
-      context.lineWidth = .002 * weight * width;
+      context.moveTo(x-(dimension * weight), y);
+      context.lineTo(x+(dimension * weight), y);
+      context.moveTo(x, y-(dimension * weight));
+      context.lineTo(x, y+(dimension * weight));
+      context.closePath();
       context.stroke();
-
-
-      // context.save();
-      // context.fillStyle = color;
-      // // context.font = `${weight * width}px "Helvetica"`;
-      // context.font = `2px "Helvetica"`;
-      // context.translate(x, y);
-      // // context.rotate(rotation);
-      // // context.fillText(symbol, 0, 0);
-      // // context.fillText("o", 0, 0);
-      // context.restore();
     });
   };
 };
