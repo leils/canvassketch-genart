@@ -5,8 +5,8 @@
   "main": "sketch.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "canvas-sketch sketch.js --open"
-
+    "start": "canvas-sketch sketch.js --open",
+    "start-with": "canvas-sketch --open"
   },
   "keywords": [],
   "author": "",
