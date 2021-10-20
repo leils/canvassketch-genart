@@ -23,7 +23,7 @@ const sketch = () => {
     for (let x=0; x<count; x++) {
       intervals.push({
         count: x,
-        rotation: random.value(x) * (Math.PI * 2)
+        rotation: random.value(x) * (Math.PI * 2) //0-2pi
       })
     }
 
@@ -42,30 +42,43 @@ const sketch = () => {
     const intervalSize = 1 / intervals.length / 2;
 
     context.save();
-    context.translate(width / 2, height / 2); //start at the center
 
-    recursivePathTrace(context, intervalSize, width, intervals);
+    recursivePathTrace(context, intervals, [width/2, height/2], [0,0]);
   };
 };
 
-const recursivePathTrace = (context, intervalSize, width, intervals) => {
+const recursivePathTrace = (context, intervals, c, lastc) => {
   //kill recursion
   if (intervals.length < 1) {
     return
   };
 
+  c1 = c[0];
+  c2 = c[1];
+
   currentPath = intervals.pop();
   context.save();
+  //translate needs to be in context to last point
+  //how do i do this off of the corner/new center instead
+  context.translate(c1 - lastc[0], c2 - lastc[1]);
   context.rotate(currentPath.rotation);
-  context.beginPath();
-  context.arc(0, 0, (intervalSize * width) * currentPath.count, 0, Math.PI * .25, true);
+
+
+  radius = .05 * 1000 * currentPath.count;
+  angle = Math.PI * currentPath.rotation;
+
+  context.arc(0, 0, radius, 0, angle, true);
   context.strokeStyle = 'black';
-  context.lineWidth = .01 * width;
+  context.lineWidth = 10;
   context.stroke();
   // need to translate to the end of the previous arc
 
   //ensure intervals has been removed
-  recursivePathTrace(context, intervalSize, width, intervals);
+  recursivePathTrace(context, intervals, getEndArcPoint(c1, c2, radius, angle), c);
+}
+
+function getEndArcPoint(c1,c2,radius,angle){
+    return [c1+Math.cos(angle)*radius,c2+Math.sin(angle)*radius];
 }
 
 canvasSketch(sketch, settings);
