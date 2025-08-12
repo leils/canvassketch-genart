@@ -6,21 +6,22 @@ const palettes = require('nice-color-palettes');
 random.setSeed(random.getRandomSeed());
 
 const settings = {
-  dimensions: [2048, 2048]
+  // dimensions: [2550, 3300]
+  dimensions: [2550, 2550]
 };
 
 const sketch = () => {
   const createGrid = (height, width) => {
     const points = [];
     const heightratio = height/width;
-    const xcount = 20;
+    const xcount = 25;
     const ycount = xcount * heightratio;
 
     for (let x=0; x < xcount; x++ ) {
       for (let y=0; y< ycount; y++) {
         const u = xcount <= 1 ? 0.5 : Math.max(0, x/(xcount - 1));
         const v = xcount <= 1 ? 0.5 : Math.max(0, y/(ycount - 1));
-        const weight = Math.abs(random.noise2D(u, v, frequency=1.75));
+        const weight = Math.abs(random.noise2D(u, v, frequency=1.2));
         points.push({
           position: [u, v],
           weight: weight,

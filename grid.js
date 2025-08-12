@@ -6,14 +6,15 @@ const palettes = require('nice-color-palettes');
 random.setSeed(random.getRandomSeed());
 
 const settings = {
-  dimensions: [2048, 2048]
+  // dimensions: [2048, 2048]
+  dimensions: [3400, 4400]
 };
 
 const sketch = () => {
   const createGrid = (height, width) => {
     const points = [];
     const heightratio = height/width;
-    const xcount = 20;
+    const xcount = 40;
     const ycount = xcount * heightratio;
 
     for (let x=0; x < xcount; x++ ) {
